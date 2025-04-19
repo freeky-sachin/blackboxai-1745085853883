@@ -1,0 +1,25 @@
+{% extends "agencies/base.html" %}
+
+{% block title %}Flood Info{% endblock %}
+
+{% block content %}
+<div class="p-6 max-w-4xl mx-auto space-y-6">
+  <h1 class="text-4xl font-bold mb-4">Flood Information</h1>
+  <div class="flex space-x-6 items-center">
+    <div class="w-48 h-48">
+      <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_4kx2q32n.json" background="transparent" speed="1" loop autoplay></lottie-player>
+    </div>
+    <div>
+      <p class="text-lg mb-4">Floods occur when water overflows onto normally dry land, often due to heavy rain or dam breaks. They can cause widespread damage and disrupt communities.</p>
+      <div class="bg-blue-100 rounded p-4">
+        <h2 class="text-xl font-semibold mb-2">Danger Level</h2>
+        <div class="w-full bg-gray-300 rounded-full h-6">
+          <div class="bg-blue-600 h-6 rounded-full animate-pulse" style="width: 60%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+{% endblock %}
