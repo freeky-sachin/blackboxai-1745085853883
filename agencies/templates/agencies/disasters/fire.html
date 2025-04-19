@@ -1,0 +1,25 @@
+{% extends "agencies/base.html" %}
+
+{% block title %}Fire Info{% endblock %}
+
+{% block content %}
+<div class="p-6 max-w-4xl mx-auto space-y-6">
+  <h1 class="text-4xl font-bold mb-4">Fire Information</h1>
+  <div class="flex space-x-6 items-center">
+    <div class="w-48 h-48">
+      <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_1pxqjqps.json" background="transparent" speed="1" loop autoplay></lottie-player>
+    </div>
+    <div>
+      <p class="text-lg mb-4">Fires can spread rapidly and cause extensive damage to property and natural resources. Firefighters work to contain and extinguish fires to protect lives and communities.</p>
+      <div class="bg-red-100 rounded p-4">
+        <h2 class="text-xl font-semibold mb-2">Danger Level</h2>
+        <div class="w-full bg-gray-300 rounded-full h-6">
+          <div class="bg-red-600 h-6 rounded-full animate-pulse" style="width: 75%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+{% endblock %}
