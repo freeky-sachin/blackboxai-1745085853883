@@ -1,5 +1,16 @@
 from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
 from .models import Agency, Resource
+
+class UserRegistrationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    agency = forms.ModelChoiceField(queryset=Agency.objects.all(), required=False)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'agency', 'password1', 'password2']
 
 class AgencyRegistrationForm(forms.ModelForm):
     class Meta:
