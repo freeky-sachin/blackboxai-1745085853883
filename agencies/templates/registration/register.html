@@ -1,0 +1,60 @@
+{% extends "agencies/base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-400 to-blue-600 p-6">
+  <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full animate-fadeInUp">
+    <h2 class="text-3xl font-extrabold mb-6 text-center text-gray-800">Create Your Account</h2>
+    <form method="post" novalidate class="space-y-6">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div>
+        <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+      </div>
+      <div>
+        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        {{ form.email }}
+        {{ form.email.errors }}
+      </div>
+      <div>
+        <label for="{{ form.agency.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Agency (optional)</label>
+        {{ form.agency }}
+        {{ form.agency.errors }}
+      </div>
+      <div>
+        <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        {{ form.password1 }}
+        {{ form.password1.errors }}
+      </div>
+      <div>
+        <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+        {{ form.password2 }}
+        {{ form.password2.errors }}
+      </div>
+      <button type="submit" class="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700 transition transform hover:scale-105 motion-reduce:transform-none">Register</button>
+    </form>
+    <p class="mt-6 text-center text-gray-600">
+      Already have an account? <a href="{% url 'login' %}" class="text-green-600 hover:underline">Login here</a>.
+    </p>
+  </div>
+</div>
+
+<style>
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease forwards;
+}
+</style>
+{% endblock %}
