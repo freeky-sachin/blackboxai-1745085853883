@@ -1,0 +1,127 @@
+from django.shortcuts import render
+
+def landing(request):
+    return render(request, 'agencies/landing.html')
+
+from .models import Agency, Resource, EmergencyAlert
+
+def agency_list(request):
+    agencies = Agency.objects.all()
+    return render(request, 'agencies/agency_list.html', {'agencies': agencies})
+
+from django.shortcuts import redirect
+from .forms import AgencyRegistrationForm
+
+def agency_register(request):
+    if request.method == 'POST':
+        form = AgencyRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('agency_list')
+    else:
+        form = AgencyRegistrationForm()
+    return render(request, 'agencies/agency_register.html', {'form': form})
+
+def agency_detail(request, pk):
+    return render(request, 'agencies/agency_detail.html')
+
+def resource_list(request):
+    resources = Resource.objects.select_related('agency').all()
+    return render(request, 'agencies/resource_list.html', {'resources': resources})
+
+def emergency_alerts(request):
+    disaster_type = request.GET.get('disaster_type')
+    location = request.GET.get('location')
+
+    alerts = EmergencyAlert.objects.filter(active=True)
+
+    if disaster_type:
+        alerts = alerts.filter(title__icontains=disaster_type)
+    if location:
+        alerts = alerts.filter(description__icontains=location)
+
+    alerts = alerts.order_by('-created_at')
+    return render(request, 'agencies/emergency_alerts.html', {'alerts': alerts})
+
+from django.shortcuts import get_object_or_404
+
+def register(request):
+    return render(request, 'registration/register.html')
+
+def chat(request):
+    return render(request, 'agencies/chat.html')
+
+def map_view(request):
+    return render(request, 'agencies/map.html')
+
+from django.db.models import Count
+from django.db.models.functions import TruncDay
+from django.utils.timezone import now, timedelta
+
+def admin_dashboard(request):
+    agency_count = Agency.objects.count()
+    resource_count = Resource.objects.aggregate(total=Count('id'))['total']
+    active_alerts_count = EmergencyAlert.objects.filter(active=True).count()
+
+    # Example data for charts: alerts per day for last 7 days
+    today = now().date()
+    seven_days_ago = today - timedelta(days=6)
+    alerts_per_day = (
+        EmergencyAlert.objects.filter(created_at__date__gte=seven_days_ago)
+        .annotate(day=TruncDay('created_at'))
+        .values('day')
+        .annotate(count=Count('id'))
+        .order_by('day')
+    )
+
+    # Prepare data for chart.js
+    chart_labels = [alert['day'].strftime('%Y-%m-%d') for alert in alerts_per_day]
+    chart_data = [alert['count'] for alert in alerts_per_day]
+
+    context = {
+        'agency_count': agency_count,
+        'resource_count': resource_count,
+        'active_alerts_count': active_alerts_count,
+        'chart_labels': chart_labels,
+        'chart_data': chart_data,
+    }
+    return render(request, 'agencies/admin_dashboard.html', context)
+
+def disaster_info(request, disaster_type):
+    disaster_type = disaster_type.lower()
+    valid_disasters = ['earthquake', 'tsunami', 'flood', 'fire']
+    if disaster_type not in valid_disasters:
+        return render(request, 'agencies/disaster_not_found.html', status=404)
+    return render(request, f'agencies/disasters/{disaster_type}.html')
+
+from .forms import ResourceForm
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+def resource_create(request):
+    if request.method == 'POST':
+        form = ResourceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('resource_list'))
+    else:
+        form = ResourceForm()
+    return render(request, 'agencies/resource_form.html', {'form': form, 'title': 'Add Resource'})
+
+def resource_update(request, pk):
+    resource = get_object_or_404(Resource, pk=pk)
+    if request.method == 'POST':
+        form = ResourceForm(request.POST, instance=resource)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('resource_list'))
+    else:
+        form = ResourceForm(instance=resource)
+    return render(request, 'agencies/resource_form.html', {'form': form, 'title': 'Edit Resource'})
+
+def resource_delete(request, pk):
+    resource = get_object_or_404(Resource, pk=pk)
+    if request.method == 'POST':
+        resource.delete()
+        return HttpResponseRedirect(reverse('resource_list'))
+    return render(request, 'agencies/resource_confirm_delete.html', {'resource': resource})
