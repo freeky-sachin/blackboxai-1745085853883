@@ -1,0 +1,43 @@
+{% extends "agencies/base.html" %}
+
+{% block title %}Emergency Alerts{% endblock %}
+
+{% block content %}
+<div class="fixed top-0 left-0 right-0 bg-red-600 text-white p-4 flex items-center justify-between animate-pulse z-50" id="alert-banner" style="display: none;">
+  <span id="alert-message"></span>
+  <button id="alert-dismiss" class="text-white font-bold px-2">×</button>
+</div>
+
+<h2 class="text-3xl font-bold mb-4">Emergency Alerts</h2>
+
+<form method="get" class="mb-6 flex space-x-4">
+  <input type="text" name="disaster_type" placeholder="Filter by Disaster Type" value="{{ request.GET.disaster_type|default_if_none:'' }}" class="border border-gray-300 rounded px-3 py-2 flex-grow" />
+  <input type="text" name="location" placeholder="Filter by Location" value="{{ request.GET.location|default_if_none:'' }}" class="border border-gray-300 rounded px-3 py-2 flex-grow" />
+  <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">Filter</button>
+</form>
+
+<ul class="space-y-4">
+  {% for alert in alerts %}
+  <li class="p-4 bg-white rounded shadow relative">
+    <h3 class="text-xl font-semibold">{{ alert.title }}</h3>
+    <p>{{ alert.description }}</p>
+    <p class="text-sm text-gray-500">Created at: {{ alert.created_at }}</p>
+    <button class="absolute top-2 right-2 text-red-600 font-bold hover:text-red-800 alert-dismiss-btn" aria-label="Dismiss alert">&times;</button>
+  </li>
+  {% empty %}
+  <li>No active alerts.</li>
+  {% endfor %}
+</ul>
+
+<script>
+  document.querySelectorAll('.alert-dismiss-btn').forEach(button => {
+    button.addEventListener('click', (e) => {
+      const alertItem = e.target.closest('li');
+      alertItem.style.transition = 'opacity 0.5s ease, max-height 0.5s ease';
+      alertItem.style.opacity = '0';
+      alertItem.style.maxHeight = '0';
+      setTimeout(() => alertItem.remove(), 500);
+    });
+  });
+</script>
+{% endblock %}
