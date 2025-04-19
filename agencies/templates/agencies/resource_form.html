@@ -1,0 +1,36 @@
+{% extends "agencies/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6 bg-white rounded shadow-md">
+  <h2 class="text-2xl font-bold mb-4">{{ title }}</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="space-y-4">
+      {{ form.non_field_errors }}
+      <div>
+        <label for="{{ form.agency.id_for_label }}" class="block font-semibold mb-1">Agency</label>
+        {{ form.agency }}
+        {{ form.agency.errors }}
+      </div>
+      <div>
+        <label for="{{ form.name.id_for_label }}" class="block font-semibold mb-1">Resource Name</label>
+        {{ form.name }}
+        {{ form.name.errors }}
+      </div>
+      <div>
+        <label for="{{ form.quantity.id_for_label }}" class="block font-semibold mb-1">Quantity</label>
+        {{ form.quantity }}
+        {{ form.quantity.errors }}
+      </div>
+      <div>
+        <label for="{{ form.description.id_for_label }}" class="block font-semibold mb-1">Description</label>
+        {{ form.description }}
+        {{ form.description.errors }}
+      </div>
+    </div>
+    <button type="submit" class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Save</button>
+  </form>
+</div>
+{% endblock %}
