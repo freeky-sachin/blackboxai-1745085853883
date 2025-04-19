@@ -1,0 +1,67 @@
+{% extends "agencies/base.html" %}
+
+{% block title %}Interactive Map{% endblock %}
+
+{% block content %}
+<div class="flex h-screen">
+  <div id="map" class="flex-1"></div>
+  <div id="sidebar" class="w-80 bg-white p-4 overflow-y-auto shadow-lg">
+    <h2 class="text-xl font-bold mb-4">Agency Stats</h2>
+    <ul id="agency-list" class="space-y-3">
+      <!-- Agency stats will be populated here -->
+    </ul>
+  </div>
+</div>
+
+<!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  crossorigin=""
+/>
+
+<!-- Leaflet JS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+  crossorigin=""
+></script>
+
+<script>
+  const map = L.map('map').setView([20, 0], 2);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+  }).addTo(map);
+
+  const agencyMarkers = {};
+  const agencyList = document.getElementById('agency-list');
+
+  // Connect to WebSocket for location updates
+  const locSocket = new WebSocket(
+    'ws://' + window.location.host + '/ws/location/'
+  );
+
+  locSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const { agency_id, latitude, longitude } = data;
+
+    if (agencyMarkers[agency_id]) {
+      agencyMarkers[agency_id].setLatLng([latitude, longitude]);
+    } else {
+      // Create a new marker with a color-coded icon based on agency type (simplified here)
+      const marker = L.marker([latitude, longitude]).addTo(map);
+      marker.bindPopup('Agency ID: ' + agency_id);
+      agencyMarkers[agency_id] = marker;
+
+      // Add to sidebar list
+      const li = document.createElement('li');
+      li.textContent = 'Agency ' + agency_id + ': Location updated';
+      agencyList.appendChild(li);
+    }
+  };
+
+  locSocket.onclose = function(e) {
+    console.error('Location socket closed unexpectedly');
+  };
+</script>
+{% endblock %}
