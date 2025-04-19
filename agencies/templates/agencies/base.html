@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Rescue Agency Platform{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-blue-600 text-white p-4 shadow">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Rescue Agency Platform</h1>
+            <nav>
+                <a href="{% url 'landing' %}" class="px-3 hover:underline">Home</a>
+                <a href="{% url 'agency_list' %}" class="px-3 hover:underline">Agencies</a>
+                <a href="{% url 'agency_register' %}" class="px-3 hover:underline">Register Agency</a>
+                <a href="{% url 'resource_list' %}" class="px-3 hover:underline">Resources</a>
+                <a href="{% url 'resource_create' %}" class="px-3 hover:underline">Add Resource</a>
+                <a href="{% url 'emergency_alerts' %}" class="px-3 hover:underline">Alerts</a>
+                <a href="{% url 'admin_dashboard' %}" class="px-3 hover:underline">Admin Dashboard</a>
+                <a href="{% url 'map_view' %}" class="px-3 hover:underline">Map</a>
+                <a href="{% url 'chat' %}" class="px-3 hover:underline">Chat</a>
+                <div class="inline-block relative group">
+                    <button class="px-3 hover:underline focus:outline-none">Disasters <i class="fas fa-caret-down"></i></button>
+                    <div class="absolute hidden group-hover:block bg-white text-black rounded shadow mt-1">
+                        <a href="{% url 'disaster_info' 'earthquake' %}" class="block px-4 py-2 hover:bg-gray-200">Earthquake</a>
+                        <a href="{% url 'disaster_info' 'tsunami' %}" class="block px-4 py-2 hover:bg-gray-200">Tsunami</a>
+                        <a href="{% url 'disaster_info' 'flood' %}" class="block px-4 py-2 hover:bg-gray-200">Flood</a>
+                        <a href="{% url 'disaster_info' 'fire' %}" class="block px-4 py-2 hover:bg-gray-200">Fire</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <main class="flex-grow container mx-auto p-6">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="bg-gray-200 text-center p-4">
+        &copy; 2025 Rescue Agency Platform
+    </footer>
+</body>
+</html>
