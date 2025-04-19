@@ -1,0 +1,15 @@
+{% extends "agencies/base.html" %}
+
+{% block title %}Delete Resource{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-6 bg-white rounded shadow-md">
+  <h2 class="text-2xl font-bold mb-4">Delete Resource</h2>
+  <p>Are you sure you want to delete the resource "{{ resource.name }}"?</p>
+  <form method="post" class="mt-4">
+    {% csrf_token %}
+    <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">Delete</button>
+    <a href="{% url 'resource_list' %}" class="ml-4 text-gray-700 hover:underline">Cancel</a>
+  </form>
+</div>
+{% endblock %}
