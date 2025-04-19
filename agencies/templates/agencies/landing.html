@@ -1,0 +1,16 @@
+{% extends "agencies/base.html" %}
+
+{% block title %}Welcome to Rescue Agencies{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto mt-20 p-8 bg-white rounded shadow text-center">
+    <h1 class="text-5xl font-extrabold mb-6 text-blue-600">Disaster Management Platform</h1>
+    <p class="text-lg mb-8 text-gray-700">Connect, coordinate, and respond effectively with real-time updates, resource tracking, and secure communication.</p>
+    <div class="space-x-4">
+        <a href="{% url 'agency_list' %}" class="btn-primary bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">View Agencies</a>
+        <a href="{% url 'resource_list' %}" class="btn-primary bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">View Resources</a>
+        <a href="{% url 'emergency_alerts' %}" class="btn-primary bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Emergency Alerts</a>
+        <a href="{% url 'chat' %}" class="btn-primary bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Secure Chat</a>
+    </div>
+</div>
+{% endblock %}
