@@ -1,0 +1,61 @@
+{% extends "agencies/base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="p-6 space-y-6">
+  <h1 class="text-3xl font-bold mb-6">Admin Dashboard</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white rounded shadow p-4 flex flex-col items-center">
+      <div class="text-4xl font-extrabold text-blue-600">{{ agency_count }}</div>
+      <div class="text-gray-600 mt-2">Agencies Registered</div>
+    </div>
+    <div class="bg-white rounded shadow p-4 flex flex-col items-center">
+      <div class="text-4xl font-extrabold text-green-600">{{ resource_count }}</div>
+      <div class="text-gray-600 mt-2">Resources Available</div>
+    </div>
+    <div class="bg-white rounded shadow p-4 flex flex-col items-center">
+      <div class="text-4xl font-extrabold text-red-600">{{ active_alerts_count }}</div>
+      <div class="text-gray-600 mt-2">Active Alerts</div>
+    </div>
+  </div>
+
+  <div class="mt-10 bg-white rounded shadow p-6">
+    <h2 class="text-2xl font-semibold mb-4">Alerts in Last 7 Days</h2>
+    <canvas id="alertsChart" class="w-full h-64"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('alertsChart').getContext('2d');
+    const alertsChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [{
+          label: 'Alerts',
+          data: {{ chart_data|safe }},
+          backgroundColor: 'rgba(220, 38, 38, 0.7)',
+          borderColor: 'rgba(220, 38, 38, 1)',
+          borderWidth: 1,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}
