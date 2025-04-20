@@ -3,10 +3,12 @@
 {% block title %}Chat{% endblock %}
 
 {% block content %}
-<h2 class="text-3xl font-bold mb-4">Secure Chat</h2>
-<div id="chat-log" class="mb-4 p-4 bg-white rounded shadow h-64 overflow-y-auto"></div>
-<input id="chat-message-input" type="text" placeholder="Type your message..." class="w-full p-2 border rounded" />
-<button id="chat-message-submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Send</button>
+<div class="max-w-4xl mx-auto animate-fadeInUp">
+  <h2 class="text-4xl font-extrabold mb-6 text-yellow-300 drop-shadow-lg">Secure Chat</h2>
+  <div id="chat-log" class="mb-4 p-6 bg-white bg-opacity-90 rounded-xl shadow-lg h-64 overflow-y-auto"></div>
+  <input id="chat-message-input" type="text" placeholder="Type your message..." class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+  <button id="chat-message-submit" class="mt-4 px-6 py-3 bg-yellow-400 text-purple-900 rounded-lg shadow-lg hover:bg-yellow-300 transition transform hover:scale-105">Send</button>
+</div>
 
 <script>
     const chatSocket = new WebSocket(
