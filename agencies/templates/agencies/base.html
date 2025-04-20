@@ -1,53 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% block title %}Rescue Agency Platform{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Rescue Agency{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
 </head>
 <body class="bg-gradient-to-r from-purple-900 via-pink-800 to-red-700 min-h-screen flex flex-col text-white">
-    <header class="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 backdrop-blur-md shadow-md z-50 w-full">
-      <nav class="container mx-auto flex items-center justify-between p-4">
-        <a href="{% url 'landing' %}" class="text-3xl font-extrabold text-white hover:text-yellow-300 transition">Rescue<span class="text-yellow-300">Agency</span></a>
-        <ul class="hidden md:flex space-x-8 font-semibold text-white">
-          <li><a href="{% url 'landing' %}" class="hover:text-yellow-300 transition">Home</a></li>
-          <li><a href="{% url 'agency_list' %}" class="hover:text-yellow-300 transition">Agencies</a></li>
-          <li><a href="{% url 'resource_list' %}" class="hover:text-yellow-300 transition">Resources</a></li>
-          <li><a href="{% url 'register' %}" class="bg-yellow-400 text-purple-900 px-4 py-2 rounded shadow hover:bg-yellow-300 transition">Sign Up</a></li>
-          <li><a href="{% url 'login' %}" class="bg-purple-900 text-yellow-400 px-4 py-2 rounded shadow hover:bg-purple-800 transition">Login</a></li>
-        </ul>
-        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-      </nav>
-      <div id="mobile-menu" class="hidden md:hidden bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 backdrop-blur-md shadow-md">
-        <ul class="flex flex-col space-y-2 p-4 font-semibold text-white">
-          <li><a href="{% url 'landing' %}" class="hover:text-yellow-300 transition">Home</a></li>
-          <li><a href="{% url 'agency_list' %}" class="hover:text-yellow-300 transition">Agencies</a></li>
-          <li><a href="{% url 'resource_list' %}" class="hover:text-yellow-300 transition">Resources</a></li>
-          <li><a href="{% url 'register' %}" class="bg-yellow-400 text-purple-900 px-4 py-2 rounded shadow hover:bg-yellow-300 transition">Sign Up</a></li>
-          <li><a href="{% url 'login' %}" class="bg-purple-900 text-yellow-400 px-4 py-2 rounded shadow hover:bg-purple-800 transition">Login</a></li>
-        </ul>
+  <header class="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 backdrop-blur-md shadow-md z-50 w-full">
+    <nav class="container mx-auto flex items-center justify-between p-4">
+      <a href="{% url 'landing' %}" class="text-3xl font-extrabold text-white hover:text-yellow-300 transition">Rescue<span class="text-yellow-300">Agency</span></a>
+      <ul class="hidden md:flex space-x-8 font-semibold text-white">
+          <a href="{% url 'agency_list' %}" class="text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-sm font-medium">Agencies</a>
+          <a href="{% url 'resource_list' %}" class="text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-sm font-medium">Resources</a>
+          <a href="{% url 'chat' %}" class="text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-sm font-medium">Chat</a>
+          {% if user.is_authenticated %}
+            <div class="relative group">
+              <button class="flex items-center space-x-2 text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-sm font-medium focus:outline-none">
+                <span>{{ user.username }}</span>
+                <i class="fas fa-chevron-down text-xs"></i>
+              </button>
+              <div class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-yellow-100">Logout</button>
+                </form>
+              </div>
+            </div>
+          {% else %}
+            <a href="{% url 'login' %}" class="text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-sm font-medium">Login</a>
+            <a href="{% url 'register' %}" class="text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-sm font-medium">Sign Up</a>
+          {% endif %}
+        </div>
+        <div class="md:hidden">
+          <!-- Mobile menu button -->
+          <button id="mobile-menu-button" class="text-gray-700 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            <i class="fas fa-bars fa-lg"></i>
+          </button>
+        </div>
       </div>
-    </header>
-    <main class="flex-grow w-full max-w-full mx-0 p-6 pt-24">
-        {% block content %}{% endblock %}
-    </main>
-    <footer class="bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 text-center p-4 text-yellow-300 shadow-inner">
-        &copy; 2025 Rescue Agency Platform
-    </footer>
+    </div>
+    <!-- Mobile menu, hidden by default -->
+    <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 space-y-1">
+      <a href="{% url 'agency_list' %}" class="block text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-base font-medium">Agencies</a>
+      <a href="{% url 'resource_list' %}" class="block text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-base font-medium">Resources</a>
+      <a href="{% url 'chat' %}" class="block text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-base font-medium">Chat</a>
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="w-full text-left text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-base font-medium">Logout</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="block text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-base font-medium">Login</a>
+        <a href="{% url 'register' %}" class="block text-gray-700 hover:text-yellow-500 px-3 py-2 rounded-md text-base font-medium">Sign Up</a>
+      {% endif %}
+    </div>
+  </nav>
 
-    <script>
-      // Mobile menu toggle
-      const menuButton = document.getElementById('mobile-menu-button');
-      const mobileMenu = document.getElementById('mobile-menu');
-      menuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-      });
-    </script>
+  <main class="flex-grow">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
 </body>
 </html>
