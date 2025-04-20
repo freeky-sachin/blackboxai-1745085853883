@@ -3,33 +3,6 @@
 {% block title %}Welcome to Rescue Agencies{% endblock %}
 
 {% block content %}
-<header class="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 backdrop-blur-md shadow-md z-50">
-  <nav class="container mx-auto flex items-center justify-between p-4">
-    <a href="{% url 'landing' %}" class="text-3xl font-extrabold text-white hover:text-pink-300 transition">Rescue<span class="text-yellow-300">Agency</span></a>
-    <ul class="hidden md:flex space-x-8 font-semibold text-white">
-      <li><a href="{% url 'landing' %}" class="hover:text-yellow-300 transition">Home</a></li>
-      <li><a href="{% url 'agency_list' %}" class="hover:text-yellow-300 transition">Agencies</a></li>
-      <li><a href="{% url 'resource_list' %}" class="hover:text-yellow-300 transition">Resources</a></li>
-      <li><a href="{% url 'register' %}" class="bg-yellow-400 text-purple-900 px-4 py-2 rounded shadow hover:bg-yellow-300 transition">Sign Up</a></li>
-      <li><a href="{% url 'login' %}" class="bg-purple-900 text-yellow-400 px-4 py-2 rounded shadow hover:bg-purple-800 transition">Login</a></li>
-    </ul>
-    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 6h16M4 12h16M4 18h16"></path>
-      </svg>
-    </button>
-  </nav>
-  <div id="mobile-menu" class="hidden md:hidden bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 backdrop-blur-md shadow-md">
-    <ul class="flex flex-col space-y-2 p-4 font-semibold text-white">
-      <li><a href="{% url 'landing' %}" class="hover:text-yellow-300 transition">Home</a></li>
-      <li><a href="{% url 'agency_list' %}" class="hover:text-yellow-300 transition">Agencies</a></li>
-      <li><a href="{% url 'resource_list' %}" class="hover:text-yellow-300 transition">Resources</a></li>
-      <li><a href="{% url 'register' %}" class="bg-yellow-400 text-purple-900 px-4 py-2 rounded shadow hover:bg-yellow-300 transition">Sign Up</a></li>
-      <li><a href="{% url 'login' %}" class="bg-purple-900 text-yellow-400 px-4 py-2 rounded shadow hover:bg-purple-800 transition">Login</a></li>
-    </ul>
-  </div>
-</header>
-
 <section class="relative bg-gradient-to-r from-purple-800 via-pink-700 to-red-600 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 px-4">
   <div class="container mx-auto text-center text-white relative z-10 max-w-5xl">
     <h1 class="text-6xl font-extrabold mb-6 animate-fadeInDown drop-shadow-lg">Rescue Agency Platform</h1>
@@ -55,46 +28,133 @@
     </div>
   </div>
 
-  <div class="w-full max-w-6xl mt-12 aspect-[16/9] relative rounded-lg shadow-lg overflow-hidden">
-    <canvas id="three-canvas" class="w-full h-full"></canvas>
+  <div class="w-full max-w-6xl mt-12 space-y-16">
+
+    <div class="flex flex-col md:flex-row items-center md:space-x-16">
+      <canvas id="three-helicopter" class="w-full md:w-1/2 h-[480px] rounded-lg shadow-lg order-last md:order-first"></canvas>
+      <div class="md:w-1/2 text-white">
+        <h2 class="text-5xl font-extrabold mb-6">Rescue Helicopter Operations</h2>
+        <p class="text-xl leading-relaxed">Experience the dynamic 3D helicopter animation representing rapid aerial rescue missions, showcasing agility and speed in critical situations.</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row items-center md:space-x-16">
+      <canvas id="three-ambulance" class="w-full md:w-1/2 h-[480px] rounded-lg shadow-lg"></canvas>
+      <div class="md:w-1/2 text-white">
+        <h2 class="text-5xl font-extrabold mb-6">Emergency Ambulance Response</h2>
+        <p class="text-xl leading-relaxed">Our 3D ambulance animation highlights the swift ground response capabilities of rescue agencies, emphasizing timely medical assistance.</p>
+      </div>
+    </div>
+
   </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.4/lottie.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.7/countUp.min.js"></script>
 
-<script>
-  // Three.js 3D globe animation
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
+<script type="module">
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js';
 
-  const geometry = new THREE.SphereGeometry(5, 64, 64);
-  const material = new THREE.MeshStandardMaterial({ color: 0xfbbf24, wireframe: true, opacity: 0.7, transparent: true });
-  const globe = new THREE.Mesh(geometry, material);
-  scene.add(globe);
+  // Helicopter canvas setup
+  const heliScene = new THREE.Scene();
+  const heliCamera = new THREE.PerspectiveCamera(75, window.innerWidth / 2 / 480, 0.1, 1000);
+  const heliRenderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-helicopter'), alpha: true, antialias: true });
+  heliRenderer.setSize(window.innerWidth / 2, 480);
 
-  const light1 = new THREE.PointLight(0xffffff, 1);
-  light1.position.set(10, 10, 10);
-  scene.add(light1);
-  const light2 = new THREE.AmbientLight(0x404040);
-  scene.add(light2);
+  // Ambulance canvas setup
+  const ambScene = new THREE.Scene();
+  const ambCamera = new THREE.PerspectiveCamera(75, window.innerWidth / 2 / 480, 0.1, 1000);
+  const ambRenderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-ambulance'), alpha: true, antialias: true });
+  ambRenderer.setSize(window.innerWidth / 2, 480);
 
-  camera.position.z = 15;
+  // Helicopter model
+  const heliBodyMaterial = new THREE.MeshStandardMaterial({ color: 0x0055cc, metalness: 0.6, roughness: 0.4 });
+  const heliBodyGeometry = new THREE.CylinderGeometry(0.5, 1.5, 4, 16);
+  const helicopterBody = new THREE.Mesh(heliBodyGeometry, heliBodyMaterial);
+  helicopterBody.rotation.z = Math.PI / 2;
+  heliScene.add(helicopterBody);
 
-  function animate() {
-    requestAnimationFrame(animate);
-    globe.rotation.y += 0.003;
-    renderer.render(scene, camera);
+  const rotorGeometry = new THREE.BoxGeometry(0.1, 4, 0.2);
+  const rotorMaterial = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.7, roughness: 0.3 });
+  const rotor = new THREE.Mesh(rotorGeometry, rotorMaterial);
+  rotor.position.set(0, 0.7, 0);
+  heliScene.add(rotor);
+
+  const lightGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+  const lightMaterialOn = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000 });
+  const lightMaterialOff = new THREE.MeshStandardMaterial({ color: 0x330000 });
+  const blinkingLight = new THREE.Mesh(lightGeometry, lightMaterialOn);
+  blinkingLight.position.set(1.8, 0.3, 0);
+  heliScene.add(blinkingLight);
+
+  const heliLight1 = new THREE.PointLight(0xffffff, 1);
+  heliLight1.position.set(10, 10, 10);
+  heliScene.add(heliLight1);
+  const heliLight2 = new THREE.AmbientLight(0x404040);
+  heliScene.add(heliLight2);
+
+  heliCamera.position.z = 10;
+
+  function animateHelicopter() {
+    requestAnimationFrame(animateHelicopter);
+    helicopterBody.rotation.y += 0.02;
+    rotor.rotation.y += 0.6;
+    helicopterBody.position.x = 2 * Math.sin(Date.now() * 0.002);
+
+    if (Date.now() % 1000 < 500) {
+      blinkingLight.material = lightMaterialOn;
+    } else {
+      blinkingLight.material = lightMaterialOff;
+    }
+
+    heliRenderer.render(heliScene, heliCamera);
   }
-  animate();
+  animateHelicopter();
+
+  // Ambulance model
+  const ambBodyMaterial = new THREE.MeshStandardMaterial({ color: 0xff3333, metalness: 0.5, roughness: 0.4 });
+  const ambBodyGeometry = new THREE.BoxGeometry(3, 1.5, 1);
+  const ambulance = new THREE.Mesh(ambBodyGeometry, ambBodyMaterial);
+  ambScene.add(ambulance);
+
+  const sirenGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+  const sirenMaterialOn = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x00ffff });
+  const sirenMaterialOff = new THREE.MeshStandardMaterial({ color: 0x003333 });
+  const sirenLight = new THREE.Mesh(sirenGeometry, sirenMaterialOn);
+  sirenLight.position.set(0, 1, 0);
+  ambScene.add(sirenLight);
+
+  const ambLight1 = new THREE.PointLight(0xffffff, 1);
+  ambLight1.position.set(10, 10, 10);
+  ambScene.add(ambLight1);
+  const ambLight2 = new THREE.AmbientLight(0x404040);
+  ambScene.add(ambLight2);
+
+  ambCamera.position.z = 10;
+
+  function animateAmbulance() {
+    requestAnimationFrame(animateAmbulance);
+    ambulance.rotation.y += 0.015;
+    ambulance.position.x = 2 * Math.cos(Date.now() * 0.002);
+
+    if (Date.now() % 1400 < 700) {
+      sirenLight.material = sirenMaterialOn;
+    } else {
+      sirenLight.material = sirenMaterialOff;
+    }
+
+    ambRenderer.render(ambScene, ambCamera);
+  }
+  animateAmbulance();
 
   window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth/window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    heliCamera.aspect = window.innerWidth / 2 / 480;
+    heliCamera.updateProjectionMatrix();
+    heliRenderer.setSize(window.innerWidth / 2, 480);
+
+    ambCamera.aspect = window.innerWidth / 2 / 480;
+    ambCamera.updateProjectionMatrix();
+    ambRenderer.setSize(window.innerWidth / 2, 480);
   });
 
   // Lottie animations
@@ -138,33 +198,5 @@
     mobileMenu.classList.toggle('hidden');
   });
 </script>
-
-<style>
-@keyframes fadeInDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-fadeInDown {
-  animation: fadeInDown 0.8s ease forwards;
-}
-.animate-fadeInUp {
-  animation: fadeInUp 0.8s ease forwards;
-}
-</style>
+</create_file>
 {% endblock %}
