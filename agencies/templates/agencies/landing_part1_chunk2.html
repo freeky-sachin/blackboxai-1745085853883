@@ -1,0 +1,33 @@
+{% if user.is_authenticated %}
+<section class="max-w-5xl mx-auto p-6 bg-white bg-opacity-10 rounded-lg shadow-lg text-white space-y-8">
+  <h1 class="text-4xl font-extrabold mb-6 text-center">Welcome back, {{ user.username }}!</h1>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <a href="{% url 'agency_register' %}" class="block bg-yellow-400 text-purple-900 rounded-lg p-6 text-center font-semibold hover:bg-yellow-300 transition shadow-lg">
+      <i class="fas fa-building fa-3x mb-4"></i>
+      <div>Add Agency</div>
+    </a>
+    <a href="{% url 'resource_create' %}" class="block bg-yellow-400 text-purple-900 rounded-lg p-6 text-center font-semibold hover:bg-yellow-300 transition shadow-lg">
+      <i class="fas fa-boxes fa-3x mb-4"></i>
+      <div>Add Resource</div>
+    </a>
+    <a href="{% url 'map_view' %}" class="block bg-yellow-400 text-purple-900 rounded-lg p-6 text-center font-semibold hover:bg-yellow-300 transition shadow-lg">
+      <i class="fas fa-map-marked-alt fa-3x mb-4"></i>
+      <div>View Map</div>
+    </a>
+    <a href="{% url 'chat' %}" class="block bg-yellow-400 text-purple-900 rounded-lg p-6 text-center font-semibold hover:bg-yellow-300 transition shadow-lg">
+      <i class="fas fa-comments fa-3x mb-4"></i>
+      <div>Chat</div>
+    </a>
+    <a href="{% url 'emergency_alerts' %}" class="block bg-yellow-400 text-purple-900 rounded-lg p-6 text-center font-semibold hover:bg-yellow-300 transition shadow-lg">
+      <i class="fas fa-bell fa-3x mb-4"></i>
+      <div>Emergency Alerts</div>
+    </a>
+  </div>
+</section>
+{% else %}
+<section class="relative bg-gradient-to-r from-purple-800 via-pink-700 to-red-600 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 px-4">
+  <div class="container mx-auto text-center text-white relative z-10 max-w-5xl">
+    <h1 class="text-6xl font-extrabold mb-6 animate-fadeInDown drop-shadow-lg">Rescue Agency Platform</h1>
+    <p class="text-2xl mb-10 max-w-3xl mx-auto animate-fadeInUp delay-200 drop-shadow-md">Connecting rescue agencies and resources in real-time to save lives during natural and man-made disasters.</p>
+    <a href="{% url 'register' %}" class="inline-block bg-yellow-400 text-purple-900 font-bold px-10 py-4 rounded shadow-lg hover:bg-yellow-300 transition transform hover:scale-105 animate-fadeInUp delay-400">Sign Up</a>
+  </div>
