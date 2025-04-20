@@ -5,8 +5,45 @@ from django.contrib.auth.forms import AuthenticationForm
 from .models import Agency, Resource, EmergencyAlert, UserProfile
 from .forms import AgencyRegistrationForm, ResourceForm, UserRegistrationForm
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def landing(request):
-    return render(request, 'agencies/landing.html')
+    user = request.user
+    context = {'user': user}  # Ensure user is passed to template
+    if hasattr(user, 'profile') and user.profile.role == 'admin':
+        # Add admin dashboard data to context
+        from django.db.models import Count
+        from django.db.models.functions import TruncDay
+        from django.utils.timezone import now, timedelta
+        from .models import Agency, Resource, EmergencyAlert
+
+        agency_count = Agency.objects.count()
+        resource_count = Resource.objects.aggregate(total=Count('id'))['total']
+        active_alerts_count = EmergencyAlert.objects.filter(active=True).count()
+
+        today = now().date()
+        seven_days_ago = today - timedelta(days=6)
+        alerts_per_day = (
+            EmergencyAlert.objects.filter(created_at__date__gte=seven_days_ago)
+            .annotate(day=TruncDay('created_at'))
+            .values('day')
+            .annotate(count=Count('id'))
+            .order_by('day')
+        )
+
+        chart_labels = [alert['day'].strftime('%Y-%m-%d') for alert in alerts_per_day]
+        chart_data = [alert['count'] for alert in alerts_per_day]
+
+        context.update({
+            'agency_count': agency_count,
+            'resource_count': resource_count,
+            'active_alerts_count': active_alerts_count,
+            'chart_labels': chart_labels,
+            'chart_data': chart_data,
+            'show_admin_dashboard': True,
+        })
+    return render(request, 'agencies/landing.html', context)
 
 def agency_list(request):
     agencies = Agency.objects.all()
@@ -35,7 +72,7 @@ def register(request):
             role = 'agency_user'
             UserProfile.objects.create(user=user, agency=agency, role=role)
             # Add success message
-            messages.success(request, 'Registration successful. Please log in.')
+            messages.success(request, 'Login Successful.')
             return redirect('login')
         else:
             # Add error message for invalid form
