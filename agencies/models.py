@@ -1,5 +1,18 @@
 from django.db import models
+from django.contrib.auth.models import User
 
+class UserProfile(models.Model):
+    USER_ROLES = (
+        ('admin', 'Admin'),
+        ('agency_user', 'Agency User'),
+    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    agency = models.ForeignKey('Agency', on_delete=models.CASCADE, null=True, blank=True, related_name='users')
+    role = models.CharField(max_length=20, choices=USER_ROLES, default='agency_user')
+
+    def __str__(self):
+        return f"{self.user.username} Profile"
+        
 class Agency(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
