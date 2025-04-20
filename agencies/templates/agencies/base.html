@@ -7,37 +7,47 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-blue-600 text-white p-4 shadow">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Rescue Agency Platform</h1>
-            <nav>
-                <a href="{% url 'landing' %}" class="px-3 hover:underline">Home</a>
-                <a href="{% url 'agency_list' %}" class="px-3 hover:underline">Agencies</a>
-                <a href="{% url 'agency_register' %}" class="px-3 hover:underline">Register Agency</a>
-                <a href="{% url 'resource_list' %}" class="px-3 hover:underline">Resources</a>
-                <a href="{% url 'resource_create' %}" class="px-3 hover:underline">Add Resource</a>
-                <a href="{% url 'emergency_alerts' %}" class="px-3 hover:underline">Alerts</a>
-                <a href="{% url 'admin_dashboard' %}" class="px-3 hover:underline">Admin Dashboard</a>
-                <a href="{% url 'map_view' %}" class="px-3 hover:underline">Map</a>
-                <a href="{% url 'chat' %}" class="px-3 hover:underline">Chat</a>
-                <div class="inline-block relative group">
-                    <button class="px-3 hover:underline focus:outline-none">Disasters <i class="fas fa-caret-down"></i></button>
-                    <div class="absolute hidden group-hover:block bg-white text-black rounded shadow mt-1">
-                        <a href="{% url 'disaster_info' 'earthquake' %}" class="block px-4 py-2 hover:bg-gray-200">Earthquake</a>
-                        <a href="{% url 'disaster_info' 'tsunami' %}" class="block px-4 py-2 hover:bg-gray-200">Tsunami</a>
-                        <a href="{% url 'disaster_info' 'flood' %}" class="block px-4 py-2 hover:bg-gray-200">Flood</a>
-                        <a href="{% url 'disaster_info' 'fire' %}" class="block px-4 py-2 hover:bg-gray-200">Fire</a>
-                    </div>
-                </div>
-            </nav>
-        </div>
+<body class="bg-gradient-to-r from-purple-900 via-pink-800 to-red-700 min-h-screen flex flex-col text-white">
+    <header class="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 backdrop-blur-md shadow-md z-50 w-full">
+      <nav class="container mx-auto flex items-center justify-between p-4">
+        <a href="{% url 'landing' %}" class="text-3xl font-extrabold text-white hover:text-yellow-300 transition">Rescue<span class="text-yellow-300">Agency</span></a>
+        <ul class="hidden md:flex space-x-8 font-semibold text-white">
+          <li><a href="{% url 'landing' %}" class="hover:text-yellow-300 transition">Home</a></li>
+          <li><a href="{% url 'agency_list' %}" class="hover:text-yellow-300 transition">Agencies</a></li>
+          <li><a href="{% url 'resource_list' %}" class="hover:text-yellow-300 transition">Resources</a></li>
+          <li><a href="{% url 'register' %}" class="bg-yellow-400 text-purple-900 px-4 py-2 rounded shadow hover:bg-yellow-300 transition">Sign Up</a></li>
+          <li><a href="{% url 'login' %}" class="bg-purple-900 text-yellow-400 px-4 py-2 rounded shadow hover:bg-purple-800 transition">Login</a></li>
+        </ul>
+        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </nav>
+      <div id="mobile-menu" class="hidden md:hidden bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 backdrop-blur-md shadow-md">
+        <ul class="flex flex-col space-y-2 p-4 font-semibold text-white">
+          <li><a href="{% url 'landing' %}" class="hover:text-yellow-300 transition">Home</a></li>
+          <li><a href="{% url 'agency_list' %}" class="hover:text-yellow-300 transition">Agencies</a></li>
+          <li><a href="{% url 'resource_list' %}" class="hover:text-yellow-300 transition">Resources</a></li>
+          <li><a href="{% url 'register' %}" class="bg-yellow-400 text-purple-900 px-4 py-2 rounded shadow hover:bg-yellow-300 transition">Sign Up</a></li>
+          <li><a href="{% url 'login' %}" class="bg-purple-900 text-yellow-400 px-4 py-2 rounded shadow hover:bg-purple-800 transition">Login</a></li>
+        </ul>
+      </div>
     </header>
-    <main class="flex-grow container mx-auto p-6">
+    <main class="flex-grow w-full max-w-full mx-0 p-6 pt-24">
         {% block content %}{% endblock %}
     </main>
-    <footer class="bg-gray-200 text-center p-4">
+    <footer class="bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 text-center p-4 text-yellow-300 shadow-inner">
         &copy; 2025 Rescue Agency Platform
     </footer>
+
+    <script>
+      // Mobile menu toggle
+      const menuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      menuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+    </script>
 </body>
 </html>
