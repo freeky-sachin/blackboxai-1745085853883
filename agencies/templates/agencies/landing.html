@@ -3,14 +3,168 @@
 {% block title %}Welcome to Rescue Agencies{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto mt-20 p-8 bg-white rounded shadow text-center">
-    <h1 class="text-5xl font-extrabold mb-6 text-blue-600">Disaster Management Platform</h1>
-    <p class="text-lg mb-8 text-gray-700">Connect, coordinate, and respond effectively with real-time updates, resource tracking, and secure communication.</p>
-    <div class="space-x-4">
-        <a href="{% url 'agency_list' %}" class="btn-primary bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">View Agencies</a>
-        <a href="{% url 'resource_list' %}" class="btn-primary bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">View Resources</a>
-        <a href="{% url 'emergency_alerts' %}" class="btn-primary bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Emergency Alerts</a>
-        <a href="{% url 'chat' %}" class="btn-primary bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Secure Chat</a>
+<header class="fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 backdrop-blur-md shadow-md z-50">
+  <nav class="container mx-auto flex items-center justify-between p-4">
+    <a href="{% url 'landing' %}" class="text-3xl font-extrabold text-white hover:text-pink-300 transition">Rescue<span class="text-yellow-300">Agency</span></a>
+    <ul class="hidden md:flex space-x-8 font-semibold text-white">
+      <li><a href="{% url 'landing' %}" class="hover:text-yellow-300 transition">Home</a></li>
+      <li><a href="{% url 'agency_list' %}" class="hover:text-yellow-300 transition">Agencies</a></li>
+      <li><a href="{% url 'resource_list' %}" class="hover:text-yellow-300 transition">Resources</a></li>
+      <li><a href="{% url 'register' %}" class="bg-yellow-400 text-purple-900 px-4 py-2 rounded shadow hover:bg-yellow-300 transition">Sign Up</a></li>
+      <li><a href="{% url 'login' %}" class="bg-purple-900 text-yellow-400 px-4 py-2 rounded shadow hover:bg-purple-800 transition">Login</a></li>
+    </ul>
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+  </nav>
+  <div id="mobile-menu" class="hidden md:hidden bg-gradient-to-r from-purple-700 via-pink-600 to-red-500 bg-opacity-90 backdrop-blur-md shadow-md">
+    <ul class="flex flex-col space-y-2 p-4 font-semibold text-white">
+      <li><a href="{% url 'landing' %}" class="hover:text-yellow-300 transition">Home</a></li>
+      <li><a href="{% url 'agency_list' %}" class="hover:text-yellow-300 transition">Agencies</a></li>
+      <li><a href="{% url 'resource_list' %}" class="hover:text-yellow-300 transition">Resources</a></li>
+      <li><a href="{% url 'register' %}" class="bg-yellow-400 text-purple-900 px-4 py-2 rounded shadow hover:bg-yellow-300 transition">Sign Up</a></li>
+      <li><a href="{% url 'login' %}" class="bg-purple-900 text-yellow-400 px-4 py-2 rounded shadow hover:bg-purple-800 transition">Login</a></li>
+    </ul>
+  </div>
+</header>
+
+<section class="relative bg-gradient-to-r from-purple-800 via-pink-700 to-red-600 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 px-4">
+  <div class="container mx-auto text-center text-white relative z-10 max-w-5xl">
+    <h1 class="text-6xl font-extrabold mb-6 animate-fadeInDown drop-shadow-lg">Rescue Agency Platform</h1>
+    <p class="text-2xl mb-10 max-w-3xl mx-auto animate-fadeInUp delay-200 drop-shadow-md">Connecting rescue agencies and resources in real-time to save lives during natural and man-made disasters.</p>
+    <a href="{% url 'register' %}" class="inline-block bg-yellow-400 text-purple-900 font-bold px-10 py-4 rounded shadow-lg hover:bg-yellow-300 transition transform hover:scale-105 animate-fadeInUp delay-400">Sign Up</a>
+  </div>
+
+  <div class="flex justify-center space-x-12 mt-16 max-w-5xl mx-auto">
+    <div class="text-center">
+      <div id="lottie-agencies" class="mx-auto w-32 h-32"></div>
+      <p class="mt-4 text-3xl font-bold text-yellow-300"><span id="counter-agencies" class="inline-block">0</span>+</p>
+      <p class="text-lg">Agencies Onboard</p>
     </div>
-</div>
+    <div class="text-center">
+      <div id="lottie-resources" class="mx-auto w-32 h-32"></div>
+      <p class="mt-4 text-3xl font-bold text-yellow-300"><span id="counter-resources" class="inline-block">0</span>+</p>
+      <p class="text-lg">Resources Available</p>
+    </div>
+    <div class="text-center">
+      <div id="lottie-alerts" class="mx-auto w-32 h-32"></div>
+      <p class="mt-4 text-3xl font-bold text-yellow-300"><span id="counter-alerts" class="inline-block">0</span>+</p>
+      <p class="text-lg">Active Alerts</p>
+    </div>
+  </div>
+
+  <div class="w-full max-w-6xl mt-12 aspect-[16/9] relative rounded-lg shadow-lg overflow-hidden">
+    <canvas id="three-canvas" class="w-full h-full"></canvas>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.min.js"></script>
+
+<script>
+  // Three.js 3D globe animation
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const geometry = new THREE.SphereGeometry(5, 64, 64);
+  const material = new THREE.MeshStandardMaterial({ color: 0xfbbf24, wireframe: true, opacity: 0.7, transparent: true });
+  const globe = new THREE.Mesh(geometry, material);
+  scene.add(globe);
+
+  const light1 = new THREE.PointLight(0xffffff, 1);
+  light1.position.set(10, 10, 10);
+  scene.add(light1);
+  const light2 = new THREE.AmbientLight(0x404040);
+  scene.add(light2);
+
+  camera.position.z = 15;
+
+  function animate() {
+    requestAnimationFrame(animate);
+    globe.rotation.y += 0.003;
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // Lottie animations
+  const lottieAgencies = lottie.loadAnimation({
+    container: document.getElementById('lottie-agencies'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'https://assets9.lottiefiles.com/packages/lf20_0yfsb3a1.json' // agencies icon animation
+  });
+
+  const lottieResources = lottie.loadAnimation({
+    container: document.getElementById('lottie-resources'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'https://assets9.lottiefiles.com/packages/lf20_4kx2q32n.json' // resources icon animation
+  });
+
+  const lottieAlerts = lottie.loadAnimation({
+    container: document.getElementById('lottie-alerts'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'https://assets9.lottiefiles.com/packages/lf20_1pxqjqps.json' // alerts icon animation
+  });
+
+  // Animated counters
+  const counterAgencies = new CountUp('counter-agencies', 120, { duration: 3, separator: ',' });
+  const counterResources = new CountUp('counter-resources', 350, { duration: 3, separator: ',' });
+  const counterAlerts = new CountUp('counter-alerts', 15, { duration: 3, separator: ',' });
+
+  counterAgencies.start();
+  counterResources.start();
+  counterAlerts.start();
+
+  // Mobile menu toggle
+  const menuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  menuButton.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+</script>
+
+<style>
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fadeInDown {
+  animation: fadeInDown 0.8s ease forwards;
+}
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease forwards;
+}
+</style>
 {% endblock %}
