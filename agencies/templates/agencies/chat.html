@@ -1,45 +1,44 @@
 {% extends "agencies/base.html" %}
+{% load static %}
+{% load form_tags %}
 
 {% block title %}Chat{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto animate-fadeInUp">
-  <h2 class="text-4xl font-extrabold mb-6 text-yellow-300 drop-shadow-lg">Secure Chat</h2>
-  <div id="chat-log" class="mb-4 p-6 bg-white bg-opacity-90 rounded-xl shadow-lg h-64 overflow-y-auto"></div>
-  <input id="chat-message-input" type="text" placeholder="Type your message..." class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400" />
-  <button id="chat-message-submit" class="mt-4 px-6 py-3 bg-yellow-400 text-purple-900 rounded-lg shadow-lg hover:bg-yellow-300 transition transform hover:scale-105">Send</button>
+<div class="max-w-4xl mx-auto p-6 bg-white bg-opacity-90 rounded shadow-lg flex flex-col h-[80vh]">
+  <h2 class="text-3xl font-bold mb-6 text-gray-900">Live Chat</h2>
+  <div id="chat-window" class="flex-grow overflow-y-auto p-4 border border-gray-300 rounded mb-4 bg-gray-50">
+    {% for message in messages %}
+      <div class="mb-3 flex {% if message.user == user %}justify-end{% else %}justify-start{% endif %}">
+        <div class="max-w-xs px-4 py-2 rounded-lg shadow
+          {% if message.user == user %}
+            bg-yellow-400 text-purple-900
+          {% else %}
+            bg-gray-300 text-gray-900
+          {% endif %}
+          ">
+          <p class="text-sm font-semibold">{{ message.user.username }}</p>
+          <p class="mt-1 whitespace-pre-wrap">{{ message.content }}</p>
+          <p class="text-xs text-gray-600 mt-1">{{ message.timestamp|date:"M d, Y H:i" }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center text-gray-500">No messages yet. Start the conversation!</p>
+    {% endfor %}
+  </div>
+  <form method="post" class="flex space-x-4" id="chat-form">
+    {% csrf_token %}
+    <input type="text" name="message" id="message-input" placeholder="Type your message..." required
+      class="flex-grow p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 text-gray-900" />
+    <button type="submit" class="bg-yellow-400 text-purple-900 px-6 py-3 rounded font-semibold hover:bg-yellow-300 transition">Send</button>
+  </form>
 </div>
 
 <script>
-    const chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/'
-    );
+  // Auto scroll chat window to bottom on page load
+  const chatWindow = document.getElementById('chat-window');
+  chatWindow.scrollTop = chatWindow.scrollHeight;
 
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        const chatLog = document.getElementById('chat-log');
-        const message = document.createElement('div');
-        message.textContent = data.message;
-        chatLog.appendChild(message);
-        chatLog.scrollTop = chatLog.scrollHeight;
-    };
-
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-    };
-
-    document.getElementById('chat-message-submit').onclick = function(e) {
-        const input = document.getElementById('chat-message-input');
-        const message = input.value;
-        if (message.trim() === '') return;
-        chatSocket.send(JSON.stringify({'message': message}));
-        input.value = '';
-    };
-
-    document.getElementById('chat-message-input').addEventListener('keyup', function(e) {
-        if (e.key === 'Enter') {
-            document.getElementById('chat-message-submit').click();
-        }
-    });
+  // Optional: Add client-side enhancements here (e.g., AJAX form submission)
 </script>
 {% endblock %}
