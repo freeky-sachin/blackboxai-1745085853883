@@ -22,6 +22,8 @@ def agency_register(request):
         form = AgencyRegistrationForm()
     return render(request, 'agencies/agency_register.html', {'form': form})
 
+from django.contrib import messages
+
 def register(request):
     from .models import Agency
     if request.method == 'POST':
@@ -32,12 +34,18 @@ def register(request):
             agency = form.cleaned_data.get('agency')
             role = 'agency_user'
             UserProfile.objects.create(user=user, agency=agency, role=role)
-            login(request, user)
-            return redirect('landing')
+            # Add success message
+            messages.success(request, 'Registration successful. Please log in.')
+            return redirect('login')
+        else:
+            # Add error message for invalid form
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = UserRegistrationForm()
     agencies = Agency.objects.all()
     return render(request, 'registration/register.html', {'form': form, 'agencies': agencies})
+
+from django.contrib import messages
 
 def user_login(request):
     if request.method == 'POST':
@@ -45,7 +53,10 @@ def user_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            messages.success(request, 'Login successful.')
             return redirect('landing')
+        else:
+            messages.error(request, 'Invalid username or password.')
     else:
         form = AuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
