@@ -13,6 +13,27 @@
     {% endfor %}
   </div>
 {% endif %}
+
+{% if show_admin_dashboard %}
+<section class="max-w-5xl mx-auto p-6 bg-white bg-opacity-10 rounded-lg shadow-lg text-white space-y-8">
+  <h1 class="text-4xl font-extrabold mb-6 text-center">Admin Dashboard</h1>
+  <div class="grid grid-cols-3 gap-6 text-center">
+    <div class="bg-yellow-400 text-purple-900 rounded-lg p-6 font-semibold shadow-lg">
+      <div class="text-6xl">{{ agency_count }}</div>
+      <div>Agencies</div>
+    </div>
+    <div class="bg-yellow-400 text-purple-900 rounded-lg p-6 font-semibold shadow-lg">
+      <div class="text-6xl">{{ resource_count }}</div>
+      <div>Resources</div>
+    </div>
+    <div class="bg-yellow-400 text-purple-900 rounded-lg p-6 font-semibold shadow-lg">
+      <div class="text-6xl">{{ active_alerts_count }}</div>
+      <div>Active Alerts</div>
+    </div>
+  </div>
+  <!-- Chart can be added here using chart_labels and chart_data if desired -->
+</section>
+{% else %}
 {% if user.is_authenticated %}
 <section class="max-w-5xl mx-auto p-6 bg-white bg-opacity-10 rounded-lg shadow-lg text-white space-y-8">
   <h1 class="text-4xl font-extrabold mb-6 text-center">Welcome back, {{ user.username }}!</h1>
@@ -46,6 +67,7 @@
     <p class="text-2xl mb-10 max-w-3xl mx-auto animate-fadeInUp delay-200 drop-shadow-md">Connecting rescue agencies and resources in real-time to save lives during natural and man-made disasters.</p>
     <a href="{% url 'register' %}" class="inline-block bg-yellow-400 text-purple-900 font-bold px-10 py-4 rounded shadow-lg hover:bg-yellow-300 transition transform hover:scale-105 animate-fadeInUp delay-400">Sign Up</a>
   </div>
+
   <div class="flex justify-center space-x-12 mt-16 max-w-5xl mx-auto">
     <div class="text-center">
       <div id="lottie-agencies" class="mx-auto w-32 h-32"></div>
@@ -63,137 +85,16 @@
       <p class="text-lg">Active Alerts</p>
     </div>
   </div>
-
-  <div class="w-full max-w-6xl mt-12 space-y-16">
-
-    <div class="flex flex-col md:flex-row items-center md:space-x-16">
-      <canvas id="three-helicopter" class="w-full md:w-1/2 h-[480px] rounded-lg shadow-lg order-last md:order-first"></canvas>
-      <div class="md:w-1/2 text-white">
-        <h2 class="text-5xl font-extrabold mb-6">Rescue Helicopter Operations</h2>
-        <p class="text-xl leading-relaxed">Experience the dynamic 3D helicopter animation representing rapid aerial rescue missions, showcasing agility and speed in critical situations.</p>
-      </div>
-    </div>
-
-    <div class="flex flex-col md:flex-row items-center md:space-x-16">
-      <canvas id="three-ambulance" class="w-full md:w-1/2 h-[480px] rounded-lg shadow-lg"></canvas>
-      <div class="md:w-1/2 text-white">
-        <h2 class="text-5xl font-extrabold mb-6">Emergency Ambulance Response</h2>
-        <p class="text-xl leading-relaxed">Our 3D ambulance animation highlights the swift ground response capabilities of rescue agencies, emphasizing timely medical assistance.</p>
-      </div>
-    </div>
-
-  </div>
 </section>
 {% endif %}
+{% endif %}
+{% endblock %}
 
+{% block extra_scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.4/lottie.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.7/countUp.min.js"></script>
 
-<script type="module">
-  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js';
-
-  // Helicopter canvas setup
-  const heliScene = new THREE.Scene();
-  const heliCamera = new THREE.PerspectiveCamera(75, window.innerWidth / 2 / 480, 0.1, 1000);
-  const heliRenderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-helicopter'), alpha: true, antialias: true });
-  heliRenderer.setSize(window.innerWidth / 2, 480);
-
-  // Ambulance canvas setup
-  const ambScene = new THREE.Scene();
-  const ambCamera = new THREE.PerspectiveCamera(75, window.innerWidth / 2 / 480, 0.1, 1000);
-  const ambRenderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-ambulance'), alpha: true, antialias: true });
-  ambRenderer.setSize(window.innerWidth / 2, 480);
-
-  // Helicopter model
-  const heliBodyMaterial = new THREE.MeshStandardMaterial({ color: 0x0055cc, metalness: 0.6, roughness: 0.4 });
-  const heliBodyGeometry = new THREE.CylinderGeometry(0.5, 1.5, 4, 16);
-  const helicopterBody = new THREE.Mesh(heliBodyGeometry, heliBodyMaterial);
-  helicopterBody.rotation.z = Math.PI / 2;
-  heliScene.add(helicopterBody);
-
-  const rotorGeometry = new THREE.BoxGeometry(0.1, 4, 0.2);
-  const rotorMaterial = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.7, roughness: 0.3 });
-  const rotor = new THREE.Mesh(rotorGeometry, rotorMaterial);
-  rotor.position.set(0, 0.7, 0);
-  heliScene.add(rotor);
-
-  const lightGeometry = new THREE.SphereGeometry(0.15, 16, 16);
-  const lightMaterialOn = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000 });
-  const lightMaterialOff = new THREE.MeshStandardMaterial({ color: 0x330000 });
-  const blinkingLight = new THREE.Mesh(lightGeometry, lightMaterialOn);
-  blinkingLight.position.set(1.8, 0.3, 0);
-  heliScene.add(blinkingLight);
-
-  const heliLight1 = new THREE.PointLight(0xffffff, 1);
-  heliLight1.position.set(10, 10, 10);
-  heliScene.add(heliLight1);
-  const heliLight2 = new THREE.AmbientLight(0x404040);
-  heliScene.add(heliLight2);
-
-  heliCamera.position.z = 10;
-
-  function animateHelicopter() {
-    requestAnimationFrame(animateHelicopter);
-    helicopterBody.rotation.y += 0.02;
-    rotor.rotation.y += 0.6;
-    helicopterBody.position.x = 2 * Math.sin(Date.now() * 0.002);
-
-    if (Date.now() % 1000 < 500) {
-      blinkingLight.material = lightMaterialOn;
-    } else {
-      blinkingLight.material = lightMaterialOff;
-    }
-
-    heliRenderer.render(heliScene, heliCamera);
-  }
-  animateHelicopter();
-
-  // Ambulance model
-  const ambBodyMaterial = new THREE.MeshStandardMaterial({ color: 0xff3333, metalness: 0.5, roughness: 0.4 });
-  const ambBodyGeometry = new THREE.BoxGeometry(3, 1.5, 1);
-  const ambulance = new THREE.Mesh(ambBodyGeometry, ambBodyMaterial);
-  ambScene.add(ambulance);
-
-  const sirenGeometry = new THREE.SphereGeometry(0.25, 16, 16);
-  const sirenMaterialOn = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x00ffff });
-  const sirenMaterialOff = new THREE.MeshStandardMaterial({ color: 0x003333 });
-  const sirenLight = new THREE.Mesh(sirenGeometry, sirenMaterialOn);
-  sirenLight.position.set(0, 1, 0);
-  ambScene.add(sirenLight);
-
-  const ambLight1 = new THREE.PointLight(0xffffff, 1);
-  ambLight1.position.set(10, 10, 10);
-  ambScene.add(ambLight1);
-  const ambLight2 = new THREE.AmbientLight(0x404040);
-  ambScene.add(ambLight2);
-
-  ambCamera.position.z = 10;
-
-  function animateAmbulance() {
-    requestAnimationFrame(animateAmbulance);
-    ambulance.rotation.y += 0.015;
-    ambulance.position.x = 2 * Math.cos(Date.now() * 0.002);
-
-    if (Date.now() % 1400 < 700) {
-      sirenLight.material = sirenMaterialOn;
-    } else {
-      sirenLight.material = sirenMaterialOff;
-    }
-
-    ambRenderer.render(ambScene, ambCamera);
-  }
-  animateAmbulance();
-
-  window.addEventListener('resize', () => {
-    heliCamera.aspect = window.innerWidth / 2 / 480;
-    heliCamera.updateProjectionMatrix();
-    heliRenderer.setSize(window.innerWidth / 2, 480);
-
-    ambCamera.aspect = window.innerWidth / 2 / 480;
-    ambCamera.updateProjectionMatrix();
-    ambRenderer.setSize(window.innerWidth / 2, 480);
-  });
-
+<script>
   // Lottie animations
   const lottieAgencies = lottie.loadAnimation({
     container: document.getElementById('lottie-agencies'),
@@ -227,14 +128,5 @@
   counterAgencies.start();
   counterResources.start();
   counterAlerts.start();
-
-  // Mobile menu toggle
-  const menuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
-  menuButton.addEventListener('click', () => {
-    mobileMenu.classList.toggle('hidden');
-  });
 </script>
-</create_file>
-
 {% endblock %}
